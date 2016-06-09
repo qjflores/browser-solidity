@@ -10,6 +10,7 @@ var BN = ethJSUtil.BN
 var EventManager = require('./lib/eventManager')
 var crypto = require('crypto')
 var async = require('async')
+var solc = require('solc/wrapper')
 
 /*
   trigger debugRequested
@@ -625,15 +626,7 @@ UniversalDApp.prototype.linkBytecode = function (contractName, cb) {
     if (err) {
       return cb(err)
     }
-    var libLabel = '__' + libraryName + Array(39 - libraryName.length).join('_')
-    var hexAddress = address.toString('hex')
-    if (hexAddress.slice(0, 2) === '0x') {
-      hexAddress = hexAddress.slice(2)
-    }
-    hexAddress = Array(40 - hexAddress.length + 1).join('0') + hexAddress
-    while (bytecode.indexOf(libLabel) >= 0) {
-      bytecode = bytecode.replace(libLabel, hexAddress)
-    }
+    bytecode = solc.linkBytecode(bytecode, { [libraryName]: ethJSUtil.addHexPrefix(address.toString('hex')) })
     self.getContractByName(contractName).bytecode = bytecode
     self.linkBytecode(contractName, cb)
   })
