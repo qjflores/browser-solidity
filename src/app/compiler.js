@@ -37,12 +37,8 @@ function Compiler (editor, handleGithubCall) {
     })
   }
 
-  var compile = function () {
+  var compile = function (files) {
     self.event.trigger('compilationStarted', [])
-    var input = editor.getValue()
-
-    var files = {}
-    files[utils.fileNameFromKey(editor.getCacheFile())] = input
     internalCompile(files)
   }
   this.compile = compile
