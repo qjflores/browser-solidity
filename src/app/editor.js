@@ -92,6 +92,13 @@ function Editor (loadingFromGist, storage) {
     return storage.get(utils.fileKey(name))
   }
 
+  this.retrieveFile = function (name) {
+    if (!this.hasFile(name)) {
+      return // undefined
+    }
+    return this.getFile(name)
+  }
+
   function getFiles () {
     var files = []
     storage.keys().forEach(function (f) {
