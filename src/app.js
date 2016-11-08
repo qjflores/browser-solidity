@@ -493,7 +493,7 @@ var run = function () {
       var files = {}
       files[utils.fileNameFromKey(editor.getCacheFile())] = editor.getValue()
 
-      compiler.compile(files)
+      compiler.compile(files, editor.getCacheFile())
     }, 300)
   }
 
@@ -550,6 +550,9 @@ var run = function () {
     if (version === 'builtin') {
       var location = window.document.location
       location = location.protocol + '//' + location.host + '/' + location.pathname
+      if (location.endsWith('index.html')) {
+        location = location.substring(0, location.length - 10)
+      }
       if (!location.endsWith('/')) {
         location += '/'
       }

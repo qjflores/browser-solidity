@@ -26,8 +26,8 @@ function Compiler (editor, handleGithubCall) {
     optimize = _optimize
   }
 
-  var internalCompile = function (files, missingInputs) {
-    gatherImports(files, missingInputs, function (error, input) {
+  var internalCompile = function (files, target, missingInputs) {
+    gatherImports(files, target, missingInputs, function (error, input) {
       if (error) {
         self.lastCompilationResult = null
         self.event.trigger('compilationFinished', [false, { 'error': error }, files])
@@ -37,9 +37,9 @@ function Compiler (editor, handleGithubCall) {
     })
   }
 
-  var compile = function (files) {
+  var compile = function (files, target) {
     self.event.trigger('compilationStarted', [])
-    internalCompile(files)
+    internalCompile(files, target)
   }
   this.compile = compile
 
@@ -117,7 +117,7 @@ function Compiler (editor, handleGithubCall) {
       self.event.trigger('compilationFinished', [false, data, source])
     } else if (missingInputs !== undefined && missingInputs.length > 0) {
       // try compiling again with the new set of inputs
-      internalCompile(source.sources, missingInputs)
+      internalCompile(source.sources, source.target, OAmissingInputs)
     } else {
       self.lastCompilationResult = {
         data: data,
@@ -203,10 +203,10 @@ function Compiler (editor, handleGithubCall) {
     worker.postMessage({cmd: 'loadVersion', data: url})
   }
 
-  function gatherImports (files, importHints, cb) {
+  function gatherImports (files, target, importHints, cb) {
     importHints = importHints || []
     if (!compilerAcceptsMultipleFiles) {
-      cb(null, files[editor.getCacheFile()])
+      cb(null, files[target])
       return
     }
     // FIXME: This will only match imports if the file begins with one.
